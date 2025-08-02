@@ -3,160 +3,372 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Rocket Landing Page</title>
+  <title>Aviator AI Clone</title>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet">
   <style>
-    body {
-      margin: 0;
-      font-family: 'Orbitron', sans-serif;
-      background: linear-gradient(to bottom, #060b1a, #000000);
-      color: white;
-      text-align: center;
-    }
-    .button {
-      background: linear-gradient(45deg, #d4145a, #fbb03b);
-      border: none;
-      border-radius: 20px;
-      color: white;
-      padding: 15px 30px;
-      margin: 10px;
-      font-size: 1.2em;
-      cursor: pointer;
-      box-shadow: 0 0 20px rgba(255, 0, 100, 0.6);
-      text-decoration: none;
-      display: inline-block;
-    }
-    .button-green {
-      background: linear-gradient(45deg, #0f0, #0c0);
-      box-shadow: 0 0 20px rgba(0, 255, 0, 0.6);
-      animation: pulse 1.5s infinite;
-    }
-    @keyframes pulse {
-      0% { box-shadow: 0 0 10px #0f0; }
-      50% { box-shadow: 0 0 30px #0f0; }
-      100% { box-shadow: 0 0 10px #0f0; }
-    }
-    .section {
-      padding: 30px 20px;
-    }
-    table {
-      margin: 0 auto;
-      border-collapse: collapse;
-      width: 80%;
-      margin-bottom: 40px;
-    }
-    th, td {
-      padding: 12px;
-      border-bottom: 1px solid #444;
-    }
-    .comment {
-      background: #111c2b;
-      margin: 10px auto;
-      padding: 15px;
-      border-radius: 15px;
-      max-width: 700px;
-      display: flex;
-      align-items: center;
-    }
-    .comment img {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      margin-right: 15px;
-    }
-    .comment-info span:first-child {
-      display: block;
+    body { margin: 0; font-family: 'Orbitron', sans-serif; background: linear-gradient(to bottom, #060b1a, #000); color: white; text-align: center; position: relative; }
+    .lang-switch { position: absolute; top: 10px; right: 10px; background: rgba(255,255,255,0.2); border: none; border-radius: 8px; color: white; padding: 6px 10px; font-size: 1rem; cursor: pointer; z-index:1001;}
+    .button, .button-green, .button-faq { border: none; border-radius: 20px; color: white; padding: 15px 30px; margin: 10px; font-size: 1.2em; cursor: pointer; text-decoration: none; display: inline-block;}
+    .button { background: linear-gradient(45deg, #d4145a, #fbb03b); box-shadow: 0 0 20px rgba(255,0,100,0.6); }
+    .button-green { background: linear-gradient(45deg, #0f0, #0c0); box-shadow: 0 0 20px rgba(0,255,0,0.6); animation: pulse 1.5s infinite; }
+    @keyframes pulse { 0% { box-shadow:0 0 10px #0f0;} 50% {box-shadow:0 0 30px #0f0;} 100% {box-shadow:0 0 10px #0f0;} }
+    .button-faq { background: #ffd500; color: #000; text-transform: uppercase; }
+    .section { padding: 60px 20px 20px; }
+    .modal { display: none; position: fixed; top:50%; left:50%; transform: translate(-50%,-50%); background:#222; padding:1.5rem; border-radius:10px; width:90%; max-width:400px; color:white; z-index:1000; box-shadow:0 0 20px rgba(0,0,0,0.8);}
+    .modal input, .modal button { width:100%; margin-top:1rem; padding:0.8rem; font-size:1rem; border-radius:6px; border:none; }
+    .modal-close { background:#444; color:#fff; margin-top:1rem; cursor: pointer; }
+    .modal-close-icon { position:absolute; top:10px; right:15px; font-size:1.5rem; color:#fff; cursor:pointer; }
+    .modal-error { color:#f55; font-size:0.9rem; margin-top:0.5rem; }
+    .modal-connect-btn { background:#ffd500; color:#000; text-transform:uppercase; border:none; border-radius:8px; padding:10px; margin-top:0.5rem; cursor:pointer; display:none;}
+    .modal-link-btn {background:#ffd500; color:#000; text-transform:uppercase; border:none; border-radius:8px; padding:18px 0; width:100%; margin-top:1.1rem; margin-bottom:0.5rem; font-weight:bold; font-size:1.18rem; cursor:pointer; text-align:center; letter-spacing: 1.2px; box-shadow:0 0 10px #ffd50077;}
+    .modal-link-btn:hover { background:#ffe066;}
+    .live-winners { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin:6rem auto; font-size:1.35rem; text-align:left; max-width:600px; }
+    .live-winners .column div { padding:6px 0; }
+    .header-item { font-weight:bold; opacity:0.75; }
+    .slide-up { animation: slideUpFade 0.6s forwards; }
+    @keyframes slideUpFade { to { opacity:0; transform:translateY(-100%);} }
+    #modal2 .highlight-value {
+      font-size: 2rem;
       font-weight: bold;
-      margin-bottom: 5px;
+      margin-top: 0.8rem;
+      background: linear-gradient(45deg,#ffe066,#ffd500,#fbb03b 80%);
+      color: #171717;
+      padding: 0.7rem 0.2rem;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #ffd50077;
+      letter-spacing: 2px;
+      border: none;
+      width: 100%;
+      text-align: center;
+      margin-bottom: 0.5rem;
+      font-family: 'Orbitron', sans-serif;
     }
-    #signal-display {
-      font-size: 1.5em;
-      color: #00ffcc;
-      margin-top: 20px;
+    #modal2 .styled-btn {
+      width: 100%;
+      margin-top: 0.8rem;
+      padding: 1.1rem;
+      font-size: 1.1rem;
+      border-radius: 14px;
+      background: linear-gradient(45deg, #00e68a 0%, #2edaff 100%);
+      color: #fff;
+      font-weight: bold;
+      border: none;
+      transition: background 0.2s;
+      box-shadow: 0 0 12px #2edaff60;
+      letter-spacing: 1px;
+      cursor: pointer;
+    }
+    #modal2 .styled-btn:hover { background: linear-gradient(45deg, #0fc173, #1cb0e3 100%);}
+    #modal2 .signal-history-box {
+      background: #191a1c;
+      border-radius: 9px;
+      margin-top: 1.5rem;
+      padding: 0.7rem 1rem 0.7rem 1rem;
+      box-shadow: 0 0 7px #fff2;
+      text-align: left;
+      min-height: 44px;
+      font-size: 1.01rem;
+      margin-bottom: 0.6rem;
+    }
+    #modal2 .signal-history-title {
+      font-size: 1.03rem;
+      font-weight: bold;
+      color: #ffd500;
+      margin-bottom: 0.5rem;
+      letter-spacing: 1px;
+      text-align: left;
+    }
+    #modal2 .signal-history-list {
+      padding: 0;
+      margin: 0;
+      list-style: none;
+      font-family: 'Orbitron', sans-serif;
+    }
+    #modal2 .signal-history-list li {
+      margin-bottom: 3px;
+      color: #f7fff8;
+      font-size: 1.07rem;
+      padding-left: 0;
+      letter-spacing: 1px;
     }
   </style>
 </head>
 <body>
+  <button class="lang-switch" onclick="openLangModal()">EN / සිංහල 🌐</button>
   <div class="section">
-    <h1>ඔබගේ වාරය තවම නැවතීලා නෑ. අදහස් වීමට තවත් තත්පර කිහිපයකි!</h1>
-    <a class="button" href="https://t.me/viratcash_bot" target="_blank">✉️ විරාත්ට ලියන්න</a>
-    <a class="button" href="https://reffpa.com/L?tag=d_3712661m_97c_&site=3712661&ad=97&r=registration" target="_blank">🎮 ඇවියේටර් ක්‍රීඩාව</a>
-    <button class="button button-green" onclick="getSignal()">✅ සංඥා ලබාගන්න</button>
-    <div id="signal-display"></div>
+    <h1 id="heading"></h1>
+    <a class="button" id="contactBtn" href="#"></a>
+    <a class="button" id="playBtn" href="#"></a>
+    <button class="button button-green" id="signalBtn" onclick="openIdModal()"></button>
+    <div id="liveWinners" class="live-winners">
+      <div class="column" id="nameColumn"><div class="header-item"></div><div></div><div></div><div></div></div>
+      <div class="column" id="amountColumn"><div class="header-item"></div><div></div><div></div><div></div></div>
+    </div>
+    <button class="button-faq" id="faqBtn" onclick="openFaqModal()"></button>
   </div>
-
-  <div class="section">
-    <h2>පසුගිය වාරයේ ජයග්‍රාහකයින්</h2>
-    <table>
-      <tr><th>නම</th><th>අදහස</th><th>ලාභය</th></tr>
-      <tr><td>Ahmed Aravi</td><td>ස්තුතියි විරාත්, මම බැංකුවේ ණය වැටුප් කරලා දැන් පොළිය අතහැරන තැනට ආවා</td><td>912,350 LKR</td></tr>
-      <tr><td>Sudu Bandara</td><td>මම මුලින් විශ්වාස නෑ කියලා හිතුවා, දැන් හැම දිනෙකම සෙල්ලම් කරනවා</td><td>2,145,700 LKR</td></tr>
-      <tr><td>Nadeesha Kumari</td><td>විශ්වාසයි! විරාත්ට ස්තුතියි, දැන් මම නිදහසේ ජීවිතයකි</td><td>1,805,600 LKR</td></tr>
-      <tr><td>Tharindu Bandara</td><td>දැනට ආයේ වැඩක් කරන්න ඕන නෑ! මට ජීවිතේ හැමදේම තියනවා!</td><td>1,523,100 LKR</td></tr>
-    </table>
+  <div class="modal" id="modalId">
+    <div class="modal-close-icon" onclick="closeAllModals()">×</div>
+    <h3 id="idModalTitle"></h3>
+    <input type="text" id="userId" placeholder="">
+    <button id="confirmBtn" onclick="confirmId()"></button>
+    <div id="idErrorMsg" class="modal-error"></div>
+    <button id="connectBtn" class="modal-connect-btn" onclick="openConnectModal()"></button>
   </div>
-
-  <div class="section">
-    <div class="comment">
-      <img src="https://randomuser.me/api/portraits/men/1.jpg" alt="avatar">
-      <div class="comment-info">
-        <span>Arjuna Fernando</span>
-        <span>ස්තුතියි විරාත්, මම බැංකුවේ ණය වැටුප් කරලා දැන් මට තවත් කරදරක් නෑ</span>
-      </div>
-    </div>
-    <div class="comment">
-      <img src="https://randomuser.me/api/portraits/men/2.jpg" alt="avatar">
-      <div class="comment-info">
-        <span>Kavinda Raj</span>
-        <span>මම මුලින් විරාත්ට විශ්වාස නෑ කියලා හිතුවා. දැන් මම ඉතා ඉක්මනින් ලක්ෂ ගානක් ප්‍රමාණයකි!</span>
-      </div>
-    </div>
-    <div class="comment">
-      <img src="https://randomuser.me/api/portraits/women/3.jpg" alt="avatar">
-      <div class="comment-info">
-        <span>Nadeesha Kumari</span>
-        <span>මම වර්තමානයේ නිදහසේ ජීවිතයක් ජීවත්වෙනවා, ස්තුතියි විරාත්ට!</span>
-      </div>
-    </div>
-    <div class="comment">
-      <img src="https://randomuser.me/api/portraits/men/4.jpg" alt="avatar">
-      <div class="comment-info">
-        <span>Ravindu Senanayake</span>
-        <span>ඔයා හොයාගත්ත ජීවිත මගට වඩා මට ගැලපෙන්නෙ නැහැ. මම වෙනස් වෙන්න ගියාවි!</span>
-      </div>
-    </div>
+  <div class="modal" id="modalConnect">
+    <div class="modal-close-icon" onclick="closeAllModals()">×</div>
+    <h3 id="connectTitle"></h3>
+    <ol id="connectList"></ol>
+    <a id="connectLinkBtn" class="modal-link-btn" href="#" target="_blank"></a>
   </div>
-
+  <div class="modal" id="modal2">
+    <div class="modal-close-icon" onclick="closeAllModals()">×</div>
+    <h3 id="betSignalTitle"></h3>
+    <div id="betAmount" class="highlight-value">LKR 50</div>
+    <button id="betBtn" class="styled-btn" onclick="generateBetAmount()"></button>
+    <div id="signalOutput" class="highlight-value">1.20x</div>
+    <button id="sigBtn" class="styled-btn" onclick="generateSignal()"></button>
+    <div class="signal-history-box">
+      <div class="signal-history-title" id="signalHistoryTitle"></div>
+      <ul class="signal-history-list" id="signalHistoryList"></ul>
+    </div>
+    <button class="modal-close" onclick="closeAllModals()">Close</button>
+  </div>
+  <div class="modal" id="modalFaq">
+    <div class="modal-close-icon" onclick="closeAllModals()">×</div>
+    <h3 id="faqTitle"></h3>
+    <div id="faqContent"></div>
+    <button class="modal-close" onclick="closeAllModals()">Close</button>
+  </div>
+  <div class="modal" id="modalLang">
+    <div class="modal-close-icon" onclick="closeAllModals()">×</div>
+    <h3>Select Language</h3>
+    <button class="button" onclick="selectLanguage('en')">🇬🇧 English</button>
+    <button class="button" onclick="selectLanguage('si')">🇱🇰 සිංහල</button>
+  </div>
   <script>
-    let signalActive = false;
+(function(){
+  if (!window.translations) {
+    window.translations = {
+      en: {
+        heading: "Your round hasn't started yet. A few seconds to prepare!",
+        contact: "✉️ Message Virat",
+        play: "🎮 Play Aviator",
+        signalBtn: "✅ Get Signal",
+        faqBtn: "❓ HOW TO USE BOT",
+        idModalTitle: "Enter your ID",
+        confirmBtn: "Confirm",
+        idPlaceholder: "Enter your ID",
+        errorMsg: "Your account is outdated; can't connect hack bot.",
+        connectBtn: "HOW TO CONNECT HACK BOT?",
+        connectTitle: "How to connect hack bot",
+        connectLinkBtn: "CREATE NEW ACCOUNT",
+        connectLink: "https://reffpa.com/L?tag=d_3712661m_97c_&site=3712661&ad=97&r=registration",
+        connectList: [
+          "1. Create a new account (must be new).",
+          "2. During registration, enter promo code: SSL888",
+          "3. Deposit at least LKR 1600 (recommended LKR 2000).",
+          "4. After deposit, you’ll get a new ID. Come back and try again!"
+        ],
+        betSignalTitle: "Bet & Signal",
+        betBtn: "Get bet amount",
+        sigBtn: "Get signal",
+        signalHistoryTitle: "Signal history",
+        faqTitle: "HOW TO USE BOT",
+        faqContent: [
+          "1- First click 'Get bet amount' to see how much to bet.",
+          "2- Place the bet, then click 'Get Signal'.",
+          "This is the only way to win!",
+          "If you get a signal without betting, it's incorrect because bot can't detect your bet.",
+          "If you lose, change browser or use VPN."
+        ],
+        liveHeaders: ["User Name:", "Earnings:"]
+      },
+      si: {
+        heading: "ඔබගේ වාරය තවම නැවතීලා නෑ. තහවුරු වීමට තවත් තත්පර කිහිපයකි!",
+        contact: "✉️ විරාත්ට ලියන්න",
+        play: "🎮 ඇවියේටර් ක්‍රීඩාව",
+        signalBtn: "✅ සංඥා ලබාගන්න",
+        faqBtn: "❓ බොට් භාවිතා කිරීම",
+        idModalTitle: "ඔබේ ID ඇතුළත් කරන්න",
+        confirmBtn: "තහවුරු කරන්න",
+        idPlaceholder: "ඔබේ ID ඇතුළත් කරන්න",
+        errorMsg: "ඔබේ ගිණුම පැරණිය; හෑක් බොට් සම්බන්ධ කළ නොහැක.",
+        connectBtn: "හෑක් බොට් සම්බන්ධ කරන ආකාරය?",
+        connectTitle: "හෑක් බොට් සම්බන්ධ කරන ආකාරය",
+        connectLinkBtn: "නව ගිණුමක් සෑදීම",
+        connectLink: "https://reffpa.com/L?tag=d_3712661m_97c_&site=3712661&ad=97&r=registration",
+        connectList: [
+          "1. අළුතින් ගිණුමක් සාදන්න (නව ගිණුමක් විතරයි).",
+          "2. ලියාපදිංචියේදී SSL888 ප්‍රෝමෝ කේතය ඇතුලත් කරන්න.",
+          "3. අවම වශයෙන් LKR 1600 තැන්පතු කරන්න (LKR 2000 ඉතා සුදුසුයි).",
+          "4. තැන්පතු කිරීමෙන් පසු ඔබට නව ID ලැබේ. නැවත මෙතැනට ආපසු එන්න!"
+        ],
+        betSignalTitle: "පන්දුව හා සංඥාව",
+        betBtn: "බැට් ප්‍රමාණය ලබාගන්න",
+        sigBtn: "සංඥාව ලබාගන්න",
+        signalHistoryTitle: "ඉතිහාසය",
+        faqTitle: "බොට් භාවිතා කරන ආකාරය",
+        faqContent: [
+          "1- මුලින්ම 'Get bet amount' ක්ලික් කර බැට් ප්‍රමාණය බලන්න.",
+          "2- පැන්දුමක් තබා 'Get Signal' ක්ලික් කරන්න.",
+          "ජයග්‍රහණය වීමට මෙය පමණක් ක්‍රමයයි!",
+          "බැට් නොකළහොත් සංඥාව නිවැරදි නොවේ.",
+          "අහිමි වුන්නහොත්, බ්‍රවුසරය හෝ VPN වෙනස් කරන්න."
+        ],
+        liveHeaders: ["පරිශීලක නාමය:", "උපයාගත් මුදල:"]
+      }
+    };
+  }
+  var signalHistory = [];
+  window.selectLanguage = function(lang) {
+    try { localStorage.setItem('lang', lang); } catch (e) {}
+    applyLanguage(lang); closeAllModals();
+  };
+  window.applyLanguage = function(lang) {
+    const t = window.translations[lang] || window.translations.si;
+    document.getElementById('heading').textContent = t.heading;
+    document.getElementById('contactBtn').textContent = t.contact;
+    document.getElementById('playBtn').textContent = t.play;
+    document.getElementById('signalBtn').textContent = t.signalBtn;
+    document.getElementById('faqBtn').textContent = t.faqBtn;
+    document.getElementById('idModalTitle').textContent = t.idModalTitle;
+    document.getElementById('userId').placeholder = t.idPlaceholder;
+    document.getElementById('confirmBtn').textContent = t.confirmBtn;
+    document.getElementById('idErrorMsg').style.display = 'none';
+    document.getElementById('connectBtn').textContent = t.connectBtn;
+    document.getElementById('connectTitle').textContent = t.connectTitle;
+    // Инструкция по шагам (connectList)
+    const list = document.getElementById('connectList');
+    list.innerHTML = '';
+    t.connectList.forEach(item => { 
+        const li = document.createElement('li');
+        li.textContent = item; 
+        list.appendChild(li); 
+    });
+    // Кнопка "Создать новый аккаунт"
+    document.getElementById('connectLinkBtn').textContent = t.connectLinkBtn;
+    document.getElementById('connectLinkBtn').href = t.connectLink;
+    document.getElementById('connectLinkBtn').style.display = "block";
+    document.getElementById('betSignalTitle').textContent = t.betSignalTitle;
+    document.getElementById('betBtn').textContent = t.betBtn;
+    document.getElementById('sigBtn').textContent = t.sigBtn;
+    document.getElementById('signalHistoryTitle').textContent = t.signalHistoryTitle;
+    document.getElementById('faqTitle').textContent = t.faqTitle;
+    const faq = document.getElementById('faqContent');
+    faq.innerHTML = '';
+    t.faqContent.forEach(line => { const p = document.createElement('p'); p.textContent = line; faq.appendChild(p); });
+    document.querySelector('#nameColumn .header-item').textContent = t.liveHeaders[0];
+    document.querySelector('#amountColumn .header-item').textContent = t.liveHeaders[1];
+    document.getElementById('connectBtn').style.display = "none";
+    renderSignalHistory();
+  };
+  window.openLangModal = function() { closeAllModals(); document.getElementById('modalLang').style.display = 'block'; }
+  window.openFaqModal = function() { closeAllModals(); document.getElementById('modalFaq').style.display = 'block'; }
+  window.openIdModal = function() {
+    closeAllModals();
+    document.getElementById('modalId').style.display = 'block';
+    document.getElementById('connectBtn').style.display = "none";
+    document.getElementById('idErrorMsg').style.display = 'none';
+    document.getElementById('userId').value = '';
+  }
+  window.openConnectModal = function() {
+    closeAllModals();
+    const lang = (function(){ try{return localStorage.getItem('lang')||'si';}catch(e){return 'si';} })();
+    applyLanguage(lang);
+    document.getElementById('modalConnect').style.display = 'block';
+  }
+  window.closeAllModals = function() { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); }
+  window.confirmId = function() {
+    const id = document.getElementById('userId').value.trim();
+    const lang = (function(){ try{return localStorage.getItem('lang')||'si';}catch(e){return 'si';} })();
+    const t = window.translations[lang];
+    if(/^13\d+$/.test(id)) {
+      closeAllModals();
+      document.getElementById('modal2').style.display = 'block';
+    } else {
+      document.getElementById('idErrorMsg').textContent = t.errorMsg;
+      document.getElementById('idErrorMsg').style.display = 'block';
+      document.getElementById('connectBtn').style.display = "block";
+    }
+  };
+  window.generateBetAmount = function() {
+    const v = Math.floor(Math.random()*(90-30+1))+30;
+    document.getElementById('betAmount').textContent = `LKR ${v}`;
+  };
 
-    function getSignal() {
-      const display = document.getElementById('signal-display');
-      
-      if (signalActive) {
-        display.textContent = '🎯 ක්‍රීඩාව සිදුවෙමින් පවතී, කරුණාකර රැඳී සිටින්න...';
+  // АНИМИРОВАННЫЙ СЧЕТЧИК ДЛЯ SIG
+  window.generateSignal = function() {
+    const r = Math.random(); let s;
+    if(r<0.6) s = (Math.random()*(1.67-1.13)+1.13).toFixed(2);
+    else if(r<0.9) s = (Math.random()*(6-1.68)+1.68).toFixed(2);
+    else s = (Math.random()*(35.86-6.1)+6.1).toFixed(2);
+    const target = parseFloat(s);
+    let current = 0.00;
+    const steps = 38;
+    let count = 0;
+    const signalElem = document.getElementById('signalOutput');
+    clearTimeout(signalElem._animTimer);
+    signalElem.textContent = "0.00x";
+    function animateStep() {
+      count++;
+      current += (target / steps);
+      if (count >= steps) {
+        signalElem.textContent = `${target.toFixed(2)}x`;
+        // Сохраняем в историю
+        signalHistory.unshift(`${target.toFixed(2)}x`);
+        if(signalHistory.length > 6) signalHistory.length = 6;
+        renderSignalHistory();
         return;
       }
-      
-      signalActive = true;
-      let multiplier;
-      const random = Math.random();
-      
-      if (random < 0.7) {
-        multiplier = (Math.random() * (1.45 - 1) + 1).toFixed(2); // 70% signals between 1 and 1.45
-      } else if (random < 0.93) {
-        multiplier = (Math.random() * (5 - 1.8) + 1.8).toFixed(2); // 23% signals between 1.8 and 5
-      } else if (random < 0.99) {
-        multiplier = (Math.random() * (70 - 15) + 15).toFixed(2); // 6% signals between 15 and 70
-      } else {
-        multiplier = (Math.random() * (190 - 100) + 100).toFixed(2); // 1% signals between 100 and 190
-      }
-      
-      display.textContent = `🚀 නව සංඥාවක් සූදානම්යි: ×${multiplier}`;
-      setTimeout(() => {
-        signalActive = false;
-      }, 9000);
+      signalElem.textContent = `${current.toFixed(2)}x`;
+      signalElem._animTimer = setTimeout(animateStep, 12);
     }
+    animateStep();
+  };
+
+  function renderSignalHistory() {
+    const list = document.getElementById('signalHistoryList');
+    list.innerHTML = '';
+    if(signalHistory.length === 0) return;
+    for(let i=0;i<signalHistory.length;i++) {
+      const li = document.createElement('li');
+      li.textContent = signalHistory[i];
+      list.appendChild(li);
+    }
+  }
+  function initLiveWinners() {
+    const nc = document.querySelectorAll('#nameColumn div');
+    const ac = document.querySelectorAll('#amountColumn div');
+    const fn = ['Ahmed','Mohamed','Saman','Nimal','Ruwan','Kamal','Chamara','Lakshan','Dilshan','Kasun','Nadeesha','Sumudu','Dilini','Shanika','Kasuni'];
+    const ln = ['Bandara','Perera','Fernando','Rajakaruna','Silva','Wijesinghe','Senanayake','De Silva','Kumara','Jayawardena'];
+    function rndN() { return fn[Math.floor(Math.random()*fn.length)]+' '+ln[Math.floor(Math.random()*ln.length)]; }
+    function rndA() { const v = Math.floor(Math.random()*(142430-34540+1))+34540; return `LKR ${v}`; }
+    let winners = [{name:rndN(),amount:rndA()},{name:rndN(),amount:rndA()},{name:rndN(),amount:rndA()}];
+    function render() { for(let i=1;i<4;i++) { nc[i].textContent = winners[i-1].name; ac[i].textContent = winners[i-1].amount; } }
+    function update() {
+      nc[1].classList.add('slide-up');
+      ac[1].classList.add('slide-up');
+      setTimeout(() => {
+        winners.shift();
+        winners.push({name:rndN(),amount:rndA()});
+        nc.forEach(e => e.classList.remove('slide-up'));
+        ac.forEach(e => e.classList.remove('slide-up'));
+        render();
+        setTimeout(update, Math.random()*3000+5000);
+      }, 600);
+    }
+    render();
+    setTimeout(update, Math.random()*3000+5000);
+  }
+  document.addEventListener('DOMContentLoaded', function(){
+    var lang = 'si';
+    try { lang = localStorage.getItem('lang')||'si'; } catch(e){}
+    applyLanguage(lang);
+    initLiveWinners();
+    document.getElementById('betAmount').textContent = "LKR 50";
+    document.getElementById('signalOutput').textContent = "1.20x";
+  });
+})();
   </script>
 </body>
 </html>
