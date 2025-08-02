@@ -22,11 +22,50 @@
     .modal-connect-btn { background:#ffd500; color:#000; text-transform:uppercase; border:none; border-radius:8px; padding:10px; margin-top:0.5rem; cursor:pointer; display:none;}
     .modal-link-btn {background:#ffd500; color:#000; text-transform:uppercase; border:none; border-radius:8px; padding:18px 0; width:100%; margin-top:1.1rem; margin-bottom:0.5rem; font-weight:bold; font-size:1.18rem; cursor:pointer; text-align:center; letter-spacing: 1.2px; box-shadow:0 0 10px #ffd50077;}
     .modal-link-btn:hover { background:#ffe066;}
-    .live-winners { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin:6rem auto; font-size:1.35rem; text-align:left; max-width:600px; }
-    .live-winners .column div { padding:6px 0; }
-    .header-item { font-weight:bold; opacity:0.75; }
-    .slide-up { animation: slideUpFade 0.6s forwards; }
-    @keyframes slideUpFade { to { opacity:0; transform:translateY(-100%);} }
+    /* Новый адаптивный winners */
+    .live-winners {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin: 5rem auto 2rem;
+      font-size: 1.13rem;
+      text-align: left;
+      max-width: 390px;
+      width: 90%;
+    }
+    .live-winner-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(24,28,31,0.5);
+      border-radius: 11px;
+      padding: 0.6em 1em;
+      min-height: 2.5em;
+      box-sizing: border-box;
+      font-family: 'Orbitron', sans-serif;
+    }
+    .live-winner-name {
+      max-width: 55%;
+      overflow: hidden;
+      word-break: break-all;
+      white-space: normal;
+      font-size: 1.09em;
+    }
+    .live-winner-amount {
+      font-size: 1.12em;
+      font-weight: bold;
+      color: #ffd500;
+      white-space: nowrap;
+      text-align: right;
+    }
+    .live-winners-header {
+      display: flex;
+      justify-content: space-between;
+      padding: 0 1em 0.5em 1em;
+      font-size: 1.09em;
+      color: #c0c0c0;
+      font-weight: bold;
+    }
     #modal2 .highlight-value {
       font-size: 2rem;
       font-weight: bold;
@@ -91,6 +130,11 @@
       padding-left: 0;
       letter-spacing: 1px;
     }
+    @media (max-width: 430px) {
+      .live-winners { font-size: 0.95rem; }
+      .live-winner-row { padding: 0.47em 0.6em; min-height: 2em;}
+      #modal2 .highlight-value { font-size:1.18rem;}
+    }
   </style>
 </head>
 <body>
@@ -101,8 +145,11 @@
     <a class="button" id="playBtn" href="#"></a>
     <button class="button button-green" id="signalBtn" onclick="openIdModal()"></button>
     <div id="liveWinners" class="live-winners">
-      <div class="column" id="nameColumn"><div class="header-item"></div><div></div><div></div><div></div></div>
-      <div class="column" id="amountColumn"><div class="header-item"></div><div></div><div></div><div></div></div>
+      <div class="live-winners-header">
+        <span id="winnersHeaderName"></span>
+        <span id="winnersHeaderAmount"></span>
+      </div>
+      <div id="winnerRows"></div>
     </div>
     <button class="button-faq" id="faqBtn" onclick="openFaqModal()"></button>
   </div>
@@ -237,7 +284,7 @@
     document.getElementById('idErrorMsg').style.display = 'none';
     document.getElementById('connectBtn').textContent = t.connectBtn;
     document.getElementById('connectTitle').textContent = t.connectTitle;
-    // Инструкция по шагам (connectList)
+    // connectList
     const list = document.getElementById('connectList');
     list.innerHTML = '';
     t.connectList.forEach(item => { 
@@ -245,128 +292,158 @@
         li.textContent = item; 
         list.appendChild(li); 
     });
-    // Кнопка "Создать новый аккаунт"
     document.getElementById('connectLinkBtn').textContent = t.connectLinkBtn;
     document.getElementById('connectLinkBtn').href = t.connectLink;
-    document.getElementById('connectLinkBtn').style.display = "block";
     document.getElementById('betSignalTitle').textContent = t.betSignalTitle;
+   
     document.getElementById('betBtn').textContent = t.betBtn;
     document.getElementById('sigBtn').textContent = t.sigBtn;
-    document.getElementById('signalHistoryTitle').textContent = t.signalHistoryTitle;
     document.getElementById('faqTitle').textContent = t.faqTitle;
     const faq = document.getElementById('faqContent');
     faq.innerHTML = '';
-    t.faqContent.forEach(line => { const p = document.createElement('p'); p.textContent = line; faq.appendChild(p); });
-    document.querySelector('#nameColumn .header-item').textContent = t.liveHeaders[0];
-    document.querySelector('#amountColumn .header-item').textContent = t.liveHeaders[1];
-    document.getElementById('connectBtn').style.display = "none";
-    renderSignalHistory();
+    t.faqContent.forEach(line => {
+      const p = document.createElement('p');
+      p.textContent = line;
+      faq.appendChild(p);
+    });
+    document.getElementById('signalHistoryTitle').textContent = t.signalHistoryTitle;
+    document.getElementById('winnersHeaderName').textContent = t.liveHeaders[0];
+    document.getElementById('winnersHeaderAmount').textContent = t.liveHeaders[1];
   };
-  window.openLangModal = function() { closeAllModals(); document.getElementById('modalLang').style.display = 'block'; }
-  window.openFaqModal = function() { closeAllModals(); document.getElementById('modalFaq').style.display = 'block'; }
+
+  window.openLangModal = function() {
+    closeAllModals();
+    document.getElementById('modalLang').style.display = 'block';
+  };
+  window.openFaqModal = function() {
+    closeAllModals();
+    document.getElementById('modalFaq').style.display = 'block';
+  };
   window.openIdModal = function() {
     closeAllModals();
     document.getElementById('modalId').style.display = 'block';
-    document.getElementById('connectBtn').style.display = "none";
     document.getElementById('idErrorMsg').style.display = 'none';
+    document.getElementById('connectBtn').style.display = 'none';
     document.getElementById('userId').value = '';
-  }
+  };
   window.openConnectModal = function() {
     closeAllModals();
-    const lang = (function(){ try{return localStorage.getItem('lang')||'si';}catch(e){return 'si';} })();
-    applyLanguage(lang);
     document.getElementById('modalConnect').style.display = 'block';
-  }
-  window.closeAllModals = function() { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); }
+  };
+  window.closeAllModals = function() {
+    document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
+  };
+
   window.confirmId = function() {
     const id = document.getElementById('userId').value.trim();
-    const lang = (function(){ try{return localStorage.getItem('lang')||'si';}catch(e){return 'si';} })();
+    const lang = localStorage.getItem('lang')||'si';
     const t = window.translations[lang];
-    if(/^13\d+$/.test(id)) {
+    if (/^13\d+$/.test(id)) {
       closeAllModals();
       document.getElementById('modal2').style.display = 'block';
+      // reset bet/signal values
+      document.getElementById('betAmount').textContent = 'LKR 50';
+      document.getElementById('signalOutput').textContent = '1.20x';
+      signalHistory = [];
+      updateSignalHistory();
     } else {
       document.getElementById('idErrorMsg').textContent = t.errorMsg;
       document.getElementById('idErrorMsg').style.display = 'block';
-      document.getElementById('connectBtn').style.display = "block";
+      document.getElementById('connectBtn').style.display = 'block';
     }
   };
+
+  // История сигналов
+  function updateSignalHistory() {
+    const ul = document.getElementById('signalHistoryList');
+    ul.innerHTML = '';
+    signalHistory.slice(-7).reverse().forEach(val => {
+      const li = document.createElement('li');
+      li.textContent = val;
+      ul.appendChild(li);
+    });
+  }
+
+  // Сумма ставки
   window.generateBetAmount = function() {
     const v = Math.floor(Math.random()*(90-30+1))+30;
     document.getElementById('betAmount').textContent = `LKR ${v}`;
   };
 
-  // АНИМИРОВАННЫЙ СЧЕТЧИК ДЛЯ SIG
+  // Анимированный сигнал
   window.generateSignal = function() {
-    const r = Math.random(); let s;
+    let r = Math.random(), s;
     if(r<0.6) s = (Math.random()*(1.67-1.13)+1.13).toFixed(2);
     else if(r<0.9) s = (Math.random()*(6-1.68)+1.68).toFixed(2);
     else s = (Math.random()*(35.86-6.1)+6.1).toFixed(2);
-    const target = parseFloat(s);
-    let current = 0.00;
-    const steps = 38;
-    let count = 0;
-    const signalElem = document.getElementById('signalOutput');
-    clearTimeout(signalElem._animTimer);
-    signalElem.textContent = "0.00x";
-    function animateStep() {
-      count++;
-      current += (target / steps);
-      if (count >= steps) {
-        signalElem.textContent = `${target.toFixed(2)}x`;
-        // Сохраняем в историю
-        signalHistory.unshift(`${target.toFixed(2)}x`);
-        if(signalHistory.length > 6) signalHistory.length = 6;
-        renderSignalHistory();
-        return;
-      }
-      signalElem.textContent = `${current.toFixed(2)}x`;
-      signalElem._animTimer = setTimeout(animateStep, 12);
-    }
-    animateStep();
+    animateSignal(parseFloat(s));
   };
 
-  function renderSignalHistory() {
-    const list = document.getElementById('signalHistoryList');
-    list.innerHTML = '';
-    if(signalHistory.length === 0) return;
-    for(let i=0;i<signalHistory.length;i++) {
-      const li = document.createElement('li');
-      li.textContent = signalHistory[i];
-      list.appendChild(li);
+  function animateSignal(target) {
+    const el = document.getElementById('signalOutput');
+    let val = 0, steps = 35, i = 0;
+    const step = target / steps;
+    function tick() {
+      i++;
+      val += step;
+      if (i < steps) {
+        el.textContent = val.toFixed(2) + 'x';
+        requestAnimationFrame(tick);
+      } else {
+        el.textContent = target.toFixed(2) + 'x';
+        signalHistory.push(target.toFixed(2) + 'x');
+        updateSignalHistory();
+      }
     }
+    tick();
   }
-  function initLiveWinners() {
-    const nc = document.querySelectorAll('#nameColumn div');
-    const ac = document.querySelectorAll('#amountColumn div');
-    const fn = ['Ahmed','Mohamed','Saman','Nimal','Ruwan','Kamal','Chamara','Lakshan','Dilshan','Kasun','Nadeesha','Sumudu','Dilini','Shanika','Kasuni'];
+
+  // Live winners FLEX version
+  window.initLiveWinners = function() {
+    const fn = ['Ahmed','Mohamed','Saman','Nimal','Ruwan','Kamal','Chamara','Lakshan','Dilshan','Kasun','Nadeesha','Sumudu','Dilini','Shanika','Kasuni','Sumudu De Silva','Mohamed Wijesinghe','Chamara Wijesinghe'];
     const ln = ['Bandara','Perera','Fernando','Rajakaruna','Silva','Wijesinghe','Senanayake','De Silva','Kumara','Jayawardena'];
-    function rndN() { return fn[Math.floor(Math.random()*fn.length)]+' '+ln[Math.floor(Math.random()*ln.length)]; }
+    function rndN() {
+      if (Math.random() < 0.35) {
+        return fn[Math.floor(Math.random()*fn.length)];
+      }
+      return fn[Math.floor(Math.random()*fn.length)] + ' ' + ln[Math.floor(Math.random()*ln.length)];
+    }
     function rndA() { const v = Math.floor(Math.random()*(142430-34540+1))+34540; return `LKR ${v}`; }
     let winners = [{name:rndN(),amount:rndA()},{name:rndN(),amount:rndA()},{name:rndN(),amount:rndA()}];
-    function render() { for(let i=1;i<4;i++) { nc[i].textContent = winners[i-1].name; ac[i].textContent = winners[i-1].amount; } }
+    function render() {
+      const rows = document.getElementById('winnerRows');
+      rows.innerHTML = '';
+      for (let i=0;i<winners.length;i++) {
+        const div = document.createElement('div');
+        div.className = 'live-winner-row';
+        const nameDiv = document.createElement('div');
+        nameDiv.className = 'live-winner-name';
+        nameDiv.textContent = winners[i].name;
+        const amountDiv = document.createElement('div');
+        amountDiv.className = 'live-winner-amount';
+        amountDiv.textContent = winners[i].amount;
+        div.appendChild(nameDiv);
+        div.appendChild(amountDiv);
+        rows.appendChild(div);
+      }
+    }
     function update() {
-      nc[1].classList.add('slide-up');
-      ac[1].classList.add('slide-up');
-      setTimeout(() => {
-        winners.shift();
-        winners.push({name:rndN(),amount:rndA()});
-        nc.forEach(e => e.classList.remove('slide-up'));
-        ac.forEach(e => e.classList.remove('slide-up'));
-        render();
-        setTimeout(update, Math.random()*3000+5000);
-      }, 600);
+      winners.shift();
+      winners.push({name:rndN(),amount:rndA()});
+      render();
+      setTimeout(update, Math.random()*3000+5000);
     }
     render();
     setTimeout(update, Math.random()*3000+5000);
-  }
-  document.addEventListener('DOMContentLoaded', function(){
-    var lang = 'si';
-    try { lang = localStorage.getItem('lang')||'si'; } catch(e){}
-    applyLanguage(lang);
+    const lang = (function(){ try{return localStorage.getItem('lang')||'si';}catch(e){return 'si';} })();
+    const t = window.translations[lang];
+    document.getElementById('winnersHeaderName').textContent = t.liveHeaders[0];
+    document.getElementById('winnersHeaderAmount').textContent = t.liveHeaders[1];
+  };
+
+  document.addEventListener('DOMContentLoaded', function() {
+    applyLanguage(localStorage.getItem('lang')||'si');
     initLiveWinners();
-    document.getElementById('betAmount').textContent = "LKR 50";
-    document.getElementById('signalOutput').textContent = "1.20x";
   });
 })();
   </script>
